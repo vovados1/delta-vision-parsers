@@ -9,10 +9,12 @@ export abstract class BaseParser<TInput> implements Parser {
 
   constructor(
     protected readonly config: ParserConfig,
-    protected readonly transformer: (data: TInput, _timestamp: number) => DataPoint
+    protected readonly transformer: (data: TInput, _timestamp: number) => DataPoint,
+    protected readonly filter?: (msg: unknown) => boolean
   ) {
     this.config = config
     this.transformer = transformer
+    this.filter = filter
   }
 
   get datapoint(): DataPoint | null {
@@ -24,10 +26,10 @@ export abstract class BaseParser<TInput> implements Parser {
 
     const ws = new WebSocket(this.WS_URL)
 
+    ws.addEventListener("message", this.onMessage)
     if (this.config.onOpen) ws.addEventListener("open", this.config.onOpen)
     if (this.config.onError) ws.addEventListener("error", this.config.onError)
     if (this.config.onClose) ws.addEventListener("close", this.config.onClose)
-    if (this.config.onDatapoint) ws.addEventListener("message", this.onMessage)
 
     this.ws = ws
   }
@@ -35,10 +37,10 @@ export abstract class BaseParser<TInput> implements Parser {
   async disconnect(): Promise<void> {
     if (!this.ws) throw new Error("WebSocket not connected")
 
+    this.ws.removeEventListener("message", this.onMessage)
     if (this.config.onOpen) this.ws.removeEventListener("open", this.config.onOpen)
     if (this.config.onError) this.ws.removeEventListener("error", this.config.onError)
     if (this.config.onClose) this.ws.removeEventListener("close", this.config.onClose)
-    if (this.config.onDatapoint) this.ws.removeEventListener("message", this.onMessage)
 
     this.ws.close()
     this.ws = undefined
@@ -46,6 +48,7 @@ export abstract class BaseParser<TInput> implements Parser {
 
   onMessage = (e: MessageEvent) => {
     const data: TInput = JSON.parse(e.data as string)
+    if (this.filter && !this.filter(data)) return
     const datapoint = this.transformer(data, e.timeStamp)
     this.config.onDatapoint?.(datapoint)
     this.currentDatapoint = datapoint
