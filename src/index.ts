@@ -1,5 +1,6 @@
 import { BinanceParser } from "./parsers/impl/BinanceParser"
 import { ByBitParser } from "./parsers/impl/ByBitParser"
+import { OkxParser } from "./parsers/impl/OkxParser"
 
 const binanceParser = new BinanceParser({
   pair: "btcusdt",
@@ -8,7 +9,7 @@ const binanceParser = new BinanceParser({
   },
 })
 
-binanceParser.connect()
+// binanceParser.connect()
 
 const byBitParser = new ByBitParser({
   pair: "BTCUSDT",
@@ -17,4 +18,13 @@ const byBitParser = new ByBitParser({
   },
 })
 
-byBitParser.connect()
+// byBitParser.connect()
+
+const okxParser = new OkxParser({
+  pair: "BTC-USDT",
+  onDatapoint: (datapoint) => {
+    console.log("Okx", datapoint)
+  },
+})
+
+okxParser.connect()
