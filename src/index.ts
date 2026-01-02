@@ -1,6 +1,7 @@
 import { BinanceParser } from "./parsers/impl/BinanceParser"
 import { ByBitParser } from "./parsers/impl/ByBitParser"
 import { OkxParser } from "./parsers/impl/OkxParser"
+import { CoinbaseParser } from "./parsers/impl/CoinbaseParser"
 
 const binanceParser = new BinanceParser({
   pair: "btcusdt",
@@ -27,4 +28,13 @@ const okxParser = new OkxParser({
   },
 })
 
-okxParser.connect()
+// okxParser.connect()
+
+const coinbaseParser = new CoinbaseParser({
+  pair: "BTC-USD",
+  onDatapoint: (datapoint) => {
+    console.log("Coinbase", datapoint)
+  },
+})
+
+coinbaseParser.connect()
