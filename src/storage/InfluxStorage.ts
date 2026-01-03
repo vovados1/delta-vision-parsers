@@ -8,12 +8,11 @@ export class InfluxStorage implements Storage {
   private readonly writeApi: WriteApi
   private readonly deleteApi: DeleteAPI
 
-  private readonly bucket: string = "orderbook_data"
-
   constructor(
     private readonly url: string,
     private readonly token: string,
-    private readonly org: string
+    private readonly org: string,
+    private readonly bucket: string
   ) {
     this.client = new InfluxDB({ url, token })
     this.writeApi = this.client.getWriteApi(org, this.bucket, "ms", {

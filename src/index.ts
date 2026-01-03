@@ -11,7 +11,8 @@ const parser = createParser(
   new InfluxStorage(
     String(process.env.INFLUXDB_URL),
     String(process.env.INFLUXDB_TOKEN),
-    String(process.env.INFLUXDB_ORG_NAME)
+    String(process.env.INFLUXDB_ORG_NAME),
+    String(process.env.INFLUXDB_BUCKET_NAME)
   )
 )
 
