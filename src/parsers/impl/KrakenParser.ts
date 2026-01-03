@@ -1,5 +1,5 @@
 import { BaseParser } from "../BaseParser"
-import { ParserConfig } from "../types"
+import type { ParserConfig } from "../types"
 
 type KrakenDatapoint = [number, string[], string, string]
 

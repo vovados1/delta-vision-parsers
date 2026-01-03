@@ -1,50 +1,18 @@
+import dotenv from "dotenv"
 import { BinanceParser } from "./parsers/impl/BinanceParser"
-import { ByBitParser } from "./parsers/impl/ByBitParser"
-import { OkxParser } from "./parsers/impl/OkxParser"
-import { CoinbaseParser } from "./parsers/impl/CoinbaseParser"
-import { KrakenParser } from "./parsers/impl/KrakenParser"
+import { createParser } from "./factories/ParserFactory"
+import { InfluxStorage } from "./storage/InfluxStorage"
 
-const binanceParser = new BinanceParser({
-  pair: "btcusdt",
-  onDatapoint: (datapoint) => {
-    console.log("Binance", datapoint)
-  },
-})
+dotenv.config({ path: ".env.local" })
 
-// binanceParser.connect()
+const parser = createParser(
+  BinanceParser,
+  { pair: "btcusdt" },
+  new InfluxStorage(
+    String(process.env.INFLUXDB_URL),
+    String(process.env.INFLUXDB_TOKEN),
+    String(process.env.INFLUXDB_ORG_NAME)
+  )
+)
 
-const byBitParser = new ByBitParser({
-  pair: "BTCUSDT",
-  onDatapoint: (datapoint) => {
-    console.log("ByBit", datapoint)
-  },
-})
-
-// byBitParser.connect()
-
-const okxParser = new OkxParser({
-  pair: "BTC-USDT",
-  onDatapoint: (datapoint) => {
-    console.log("Okx", datapoint)
-  },
-})
-
-// okxParser.connect()
-
-const coinbaseParser = new CoinbaseParser({
-  pair: "BTC-USD",
-  onDatapoint: (datapoint) => {
-    console.log("Coinbase", datapoint)
-  },
-})
-
-// coinbaseParser.connect()
-
-const krakenParser = new KrakenParser({
-  pair: "BTC/USD",
-  onDatapoint: (datapoint) => {
-    console.log("Kraken", datapoint)
-  },
-})
-
-krakenParser.connect()
+parser.connect()

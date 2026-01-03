@@ -1,4 +1,4 @@
-import { DataPoint, Parser, ParserConfig } from "./types"
+import type { DataPoint, Parser, ParserConfig } from "./types"
 
 export abstract class BaseParser<TInput> implements Parser {
   public static readonly EXCHANGE_NAME: string
@@ -9,7 +9,7 @@ export abstract class BaseParser<TInput> implements Parser {
 
   constructor(
     protected readonly config: ParserConfig,
-    protected readonly transformer: (data: TInput, _timestamp: number) => DataPoint,
+    protected readonly transformer: (data: TInput) => DataPoint,
     protected readonly filter?: (msg: unknown) => boolean
   ) {
     this.config = config
@@ -19,6 +19,10 @@ export abstract class BaseParser<TInput> implements Parser {
 
   get datapoint(): DataPoint | null {
     return this.currentDatapoint
+  }
+
+  get exchangeName(): string {
+    return (this.constructor as typeof BaseParser).EXCHANGE_NAME
   }
 
   async connect(): Promise<void> {
@@ -49,7 +53,7 @@ export abstract class BaseParser<TInput> implements Parser {
   onMessage = (e: MessageEvent) => {
     const data: TInput = JSON.parse(e.data as string)
     if (this.filter && !this.filter(data)) return
-    const datapoint = this.transformer(data, e.timeStamp)
+    const datapoint = this.transformer(data)
     this.config.onDatapoint?.(datapoint)
     this.currentDatapoint = datapoint
   }

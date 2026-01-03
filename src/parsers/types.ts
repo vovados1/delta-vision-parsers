@@ -8,6 +8,7 @@ export interface DataPoint {
 
 export interface Parser {
   get datapoint(): DataPoint | null
+  get exchangeName(): string
   connect(): Promise<void>
   disconnect(): Promise<void>
 }

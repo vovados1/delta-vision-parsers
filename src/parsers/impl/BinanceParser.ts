@@ -1,5 +1,5 @@
 import { BaseParser } from "../BaseParser"
-import { ParserConfig } from "../types"
+import type { ParserConfig } from "../types"
 
 interface BinanceDatapoint {
   u: number
@@ -16,12 +16,12 @@ export class BinanceParser extends BaseParser<BinanceDatapoint> {
   protected readonly WS_URL = `wss://stream.binance.com:9443/ws/${this.config.pair}@bookTicker`
 
   constructor(config: ParserConfig) {
-    super(config, (data, timestamp) => ({
+    super(config, (data) => ({
       bid: Number(data.b),
       ask: Number(data.a),
       bidQty: Number(data.B),
       askQty: Number(data.A),
-      timestamp,
+      timestamp: Date.now(),
     }))
   }
 }
