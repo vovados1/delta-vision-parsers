@@ -1,4 +1,4 @@
-import type { Parser, ParserConfig } from "../parsers/types"
+import type { Parser, ParserConfig } from "./types"
 import type { Storage } from "../storage/types"
 
 export function createParser(

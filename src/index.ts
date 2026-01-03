@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 import { BinanceParser } from "./parsers/impl/BinanceParser"
-import { createParser } from "./factories/ParserFactory"
+import { createParser } from "./parsers/parserFactory"
 import { InfluxStorage } from "./storage/InfluxStorage"
 
 dotenv.config({ path: ".env.local" })
