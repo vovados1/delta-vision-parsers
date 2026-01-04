@@ -1,4 +1,4 @@
-import { DataPoint } from "../parsers/types"
+import type { DataPoint } from "../parsers/types"
 
 export interface Storage {
   writeDatapoint(exchange: string, pair: string, datapoint: DataPoint): Promise<void>

@@ -7,15 +7,11 @@ export abstract class BaseParser<TInput> implements Parser {
   protected abstract readonly WS_URL: string
   protected currentDatapoint: DataPoint | null = null
 
-  constructor(
-    protected readonly config: ParserConfig,
-    protected readonly transformer: (data: TInput) => DataPoint,
-    protected readonly filter?: (msg: unknown) => boolean
-  ) {
-    this.config = config
-    this.transformer = transformer
-    this.filter = filter
-  }
+  constructor(protected readonly config: ParserConfig) {}
+
+  abstract transformer(data: TInput): DataPoint
+  abstract getPairName(): string
+  filter?(msg: unknown): boolean
 
   get datapoint(): DataPoint | null {
     return this.currentDatapoint

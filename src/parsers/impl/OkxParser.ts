@@ -1,5 +1,5 @@
 import { BaseParser } from "../BaseParser"
-import type { ParserConfig } from "../types"
+import type { DataPoint, ParserConfig } from "../types"
 
 interface OkxDatapoint {
   arg: {
@@ -28,7 +28,7 @@ export class OkxParser extends BaseParser<OkxDatapoint> {
           args: [
             {
               channel: "bbo-tbt",
-              instId: this.config.pair,
+              instId: this.getPairName(),
             },
           ],
         })
@@ -36,19 +36,25 @@ export class OkxParser extends BaseParser<OkxDatapoint> {
       config.onOpen?.()
     }
 
-    super(
-      { ...config, onOpen },
-      (data) => ({
-        bid: Number(data.data[0].bids[0][0]),
-        ask: Number(data.data[0].asks[0][0]),
-        bidQty: Number(data.data[0].bids[0][1]),
-        askQty: Number(data.data[0].asks[0][1]),
-        timestamp: Number(data.data[0].ts),
-      }),
-      (msg) => {
-        const obj = msg as { data?: { asks: string[][] }[] }
-        return !!obj?.data?.[0]?.asks
-      }
-    )
+    super({ ...config, onOpen })
+  }
+
+  transformer(data: OkxDatapoint): DataPoint {
+    return {
+      bid: Number(data.data[0].bids[0][0]),
+      ask: Number(data.data[0].asks[0][0]),
+      bidQty: Number(data.data[0].bids[0][1]),
+      askQty: Number(data.data[0].asks[0][1]),
+      timestamp: Number(data.data[0].ts),
+    }
+  }
+
+  getPairName(): string {
+    return this.config.pair.replace("/", "-").toUpperCase()
+  }
+
+  filter(msg: unknown): boolean {
+    const obj = msg as { data?: { asks: string[][] }[] }
+    return !!obj?.data?.[0]?.asks
   }
 }

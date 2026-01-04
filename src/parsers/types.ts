@@ -14,6 +14,7 @@ export interface Parser {
 }
 
 export interface ParserConfig {
+  // Pair should look like `btc/usdt`
   pair: string
   onOpen?: () => void | Promise<void>
   onClose?: () => void | Promise<void>

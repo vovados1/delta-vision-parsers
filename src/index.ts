@@ -1,19 +1,46 @@
 import dotenv from "dotenv"
 import { BinanceParser } from "./parsers/impl/BinanceParser"
+import { ByBitParser } from "./parsers/impl/ByBitParser"
+import { CoinbaseParser } from "./parsers/impl/CoinbaseParser"
+import { KrakenParser } from "./parsers/impl/KrakenParser"
+import { OkxParser } from "./parsers/impl/OkxParser"
 import { createParser } from "./parsers/parserFactory"
 import { InfluxStorage } from "./storage/InfluxStorage"
+import type { Parser, ParserConfig } from "./parsers/types"
 
 dotenv.config({ path: ".env.local" })
 
-const parser = createParser(
-  BinanceParser,
-  { pair: "btcusdt" },
-  new InfluxStorage(
-    String(process.env.INFLUXDB_URL),
-    String(process.env.INFLUXDB_TOKEN),
-    String(process.env.INFLUXDB_ORG_NAME),
-    String(process.env.INFLUXDB_BUCKET_NAME)
-  )
+const parsersPool: Record<string, new (config: ParserConfig) => Parser> = {
+  binance: BinanceParser,
+  bybit: ByBitParser,
+  coinbase: CoinbaseParser,
+  kraken: KrakenParser,
+  okx: OkxParser,
+}
+
+// Parse `exchange` and `pairs` from command line arguments
+const exchange = process.argv.find((arg) => arg.startsWith("--exchange="))?.split("=")[1] as keyof typeof parsersPool
+// `pairs` should look like `btc/usdt,eth/usdt,sol/usdt`
+const pairs = process.argv
+  .find((arg) => arg.startsWith("--pairs="))
+  ?.split("=")[1]
+  .split(",")
+
+if (!exchange || !pairs) {
+  console.error("Exchange and pairs are required")
+  process.exit(1)
+}
+
+// Initialize InfluxDB storage (1 WS connection per exchange/process)
+const storage = new InfluxStorage(
+  String(process.env.INFLUXDB_URL),
+  String(process.env.INFLUXDB_TOKEN),
+  String(process.env.INFLUXDB_ORG_NAME),
+  String(process.env.INFLUXDB_BUCKET_NAME)
 )
 
-parser.connect()
+// Create and connect parsers for each pair
+pairs.forEach((pair) => {
+  const parser = createParser(parsersPool[exchange], { pair }, storage)
+  parser.connect()
+})

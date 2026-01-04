@@ -1,5 +1,5 @@
 import { BaseParser } from "../BaseParser"
-import type { ParserConfig } from "../types"
+import type { DataPoint, ParserConfig } from "../types"
 
 interface CoinbaseDatapoint {
   type: string
@@ -32,26 +32,32 @@ export class CoinbaseParser extends BaseParser<CoinbaseDatapoint> {
       this.ws.send(
         JSON.stringify({
           type: "subscribe",
-          product_ids: [this.config.pair],
+          product_ids: [this.getPairName()],
           channels: ["ticker"],
         })
       )
       config.onOpen?.()
     }
 
-    super(
-      { ...config, onOpen },
-      (data) => ({
-        bid: Number(data.best_bid),
-        ask: Number(data.best_ask),
-        bidQty: Number(data.best_bid_size),
-        askQty: Number(data.best_ask_size),
-        timestamp: Date.parse(data.time),
-      }),
-      (msg) => {
-        const obj = msg as { type: string }
-        return obj?.type === "ticker"
-      }
-    )
+    super({ ...config, onOpen })
+  }
+
+  transformer(data: CoinbaseDatapoint): DataPoint {
+    return {
+      bid: Number(data.best_bid),
+      ask: Number(data.best_ask),
+      bidQty: Number(data.best_bid_size),
+      askQty: Number(data.best_ask_size),
+      timestamp: Date.parse(data.time),
+    }
+  }
+
+  getPairName(): string {
+    return this.config.pair.replace("/", "-").toUpperCase()
+  }
+
+  filter(msg: unknown): boolean {
+    const obj = msg as { type: string }
+    return obj?.type === "ticker"
   }
 }
