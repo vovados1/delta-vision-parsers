@@ -1,0 +1,45 @@
+# Dependencies (will be installed fresh in container)
+node_modules
+
+# Git
+.git
+.gitignore
+
+# Environment files (secrets should come from docker-compose/orchestrator)
+.env*
+
+# IDE / Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Documentation
+*.md
+LICENSE
+
+# Linting / Formatting config
+eslint.config.*
+.eslintrc*
+.prettierrc*
+prettier.config.*
+
+# TypeScript build info
+*.tsbuildinfo
+tsconfig*.json
+
+# Docker files (no need to copy into context)
+Dockerfile
+docker-compose*.yml
+.dockerignore
+
+# Logs
+*.log
+logs
+
+# Test files
+*.test.ts
+*.spec.ts
+__tests__
+coverage
+
