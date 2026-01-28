@@ -3,7 +3,7 @@ import type { DataPoint, Parser, ParserConfig } from "./types"
 export abstract class BaseParser<TInput> implements Parser {
   public static readonly EXCHANGE_NAME: string
 
-  protected ws: WebSocket | undefined = undefined
+  protected ws?: WebSocket
   protected abstract readonly WS_URL: string
   protected currentDatapoint: DataPoint | null = null
 

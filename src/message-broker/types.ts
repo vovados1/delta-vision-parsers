@@ -1,5 +1,3 @@
-import type { DataPoint } from "../parsers/types"
-
 export interface MessageBroker {
-  produceDatapoint(datapoint: DataPoint): Promise<void>
+  produce(message: unknown, key?: string): Promise<void>
 }

@@ -1,6 +1,5 @@
 import { Kafka, type Consumer, type Producer } from "kafkajs"
 import type { MessageBroker } from "./types"
-import type { DataPoint } from "../parsers/types"
 
 export class KafkaBroker implements MessageBroker {
   protected readonly client: Kafka
@@ -25,7 +24,7 @@ export class KafkaBroker implements MessageBroker {
     await this.producer.connect()
   }
 
-  async produceDatapoint(datapoint: DataPoint) {
-    await this.producer.send({ topic: this.topic, messages: [{ value: JSON.stringify(datapoint) }] })
+  async produce(message: unknown, key?: string) {
+    await this.producer.send({ topic: this.topic, messages: [{ value: JSON.stringify(message), key }] })
   }
 }

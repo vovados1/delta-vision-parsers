@@ -9,7 +9,7 @@ export function createParser(
   const parser = new ParserClass({
     ...config,
     onDatapoint: (datapoint) => {
-      messageBroker.produceDatapoint(datapoint)
+      messageBroker.produce(datapoint, `${parser.exchangeName.toLowerCase()}_${config.pair}`)
     },
   })
 

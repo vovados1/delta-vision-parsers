@@ -1,5 +1,4 @@
 import dotenv from "dotenv"
-import { Kafka } from "kafkajs"
 import { BinanceParser } from "./parsers/impl/BinanceParser"
 import { ByBitParser } from "./parsers/impl/ByBitParser"
 import { CoinbaseParser } from "./parsers/impl/CoinbaseParser"
@@ -10,23 +9,6 @@ import type { Parser, ParserConfig } from "./parsers/types"
 import { KafkaBroker } from "./message-broker/KafkaBroker"
 
 dotenv.config({ path: ".env.local" })
-
-const kafka = new Kafka({
-  clientId: String(process.env.KAFKA_CLIENT_ID),
-  brokers: String(process.env.KAFKA_BROKERS).split(","),
-})
-const producer = kafka.producer()
-
-producer.connect().then(() => {
-  producer
-    .send({
-      topic: "data-topic",
-      messages: [{ value: "Hello KafkaJS user!" }],
-    })
-    .then(() => {
-      producer.disconnect()
-    })
-})
 
 const parsersPool: Record<string, new (config: ParserConfig) => Parser> = {
   binance: BinanceParser,
