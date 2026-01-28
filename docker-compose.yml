@@ -1,0 +1,55 @@
+services:
+  binance-parser:
+    image: ${PARSER_IMAGE:-delta-vision-parsers:latest}
+    environment:
+      EXCHANGE: binance
+      PAIRS: btc/usdt,ltc/usdt
+      INFLUXDB_URL: ${INFLUXDB_URL}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+      INFLUXDB_ORG_NAME: ${INFLUXDB_ORG_NAME}
+      INFLUXDB_BUCKET_NAME: ${INFLUXDB_BUCKET_NAME}
+    restart: unless-stopped
+
+  bybit-parser:
+    image: ${PARSER_IMAGE:-delta-vision-parsers:latest}
+    environment:
+      EXCHANGE: bybit
+      PAIRS: btc/usdt,ltc/usdt
+      INFLUXDB_URL: ${INFLUXDB_URL}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+      INFLUXDB_ORG_NAME: ${INFLUXDB_ORG_NAME}
+      INFLUXDB_BUCKET_NAME: ${INFLUXDB_BUCKET_NAME}
+    restart: unless-stopped
+
+  coinbase-parser:
+    image: ${PARSER_IMAGE:-delta-vision-parsers:latest}
+    environment:
+      EXCHANGE: coinbase
+      PAIRS: btc/usdt,ltc/usdt
+      INFLUXDB_URL: ${INFLUXDB_URL}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+      INFLUXDB_ORG_NAME: ${INFLUXDB_ORG_NAME}
+      INFLUXDB_BUCKET_NAME: ${INFLUXDB_BUCKET_NAME}
+    restart: unless-stopped
+
+  kraken-parser:
+    image: ${PARSER_IMAGE:-delta-vision-parsers:latest}
+    environment:
+      EXCHANGE: kraken
+      PAIRS: btc/usdt,ltc/usdt
+      INFLUXDB_URL: ${INFLUXDB_URL}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+      INFLUXDB_ORG_NAME: ${INFLUXDB_ORG_NAME}
+      INFLUXDB_BUCKET_NAME: ${INFLUXDB_BUCKET_NAME}
+    restart: unless-stopped
+
+  okx-parser:
+    image: ${PARSER_IMAGE:-delta-vision-parsers:latest}
+    environment:
+      EXCHANGE: okx
+      PAIRS: btc/usdt,ltc/usdt
+      INFLUXDB_URL: ${INFLUXDB_URL}
+      INFLUXDB_TOKEN: ${INFLUXDB_TOKEN}
+      INFLUXDB_ORG_NAME: ${INFLUXDB_ORG_NAME}
+      INFLUXDB_BUCKET_NAME: ${INFLUXDB_BUCKET_NAME}
+    restart: unless-stopped
